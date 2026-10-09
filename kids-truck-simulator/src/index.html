@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Kids Truck Simulator - Truk Pasir Ceria & Klakson Telolet 🚚</title>
+  <title>Kids Truck Simulator - Truk Pasir Ceria & Petualangan 3 Level 🚚</title>
   
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -21,7 +21,6 @@
       user-select: none;
       -webkit-user-select: none;
     }
-    /* Tombol 3D Kartun Tebal & Empuk */
     .btn-3d {
       transition: all 0.08s ease;
       box-shadow: 0 6px 0 rgba(0, 0, 0, 0.28);
@@ -30,7 +29,6 @@
       transform: translateY(4px);
       box-shadow: 0 2px 0 rgba(0, 0, 0, 0.28);
     }
-    /* Animasi Klakson Berdenyut */
     @keyframes horn-ring {
       0%, 100% { transform: scale(1); }
       50% { transform: scale(1.15) rotate(-3deg); }
@@ -43,48 +41,55 @@
 <body class="bg-gradient-to-b from-sky-400 via-sky-300 to-emerald-300 min-h-screen flex flex-col justify-between overflow-x-hidden">
 
   <!-- ========================================== -->
-  <!-- 1. TOP HEADER / STATUS BAR YANG RAPI       -->
+  <!-- 1. TOP HEADER / STATUS BAR & LEVEL SELECT  -->
   <!-- ========================================== -->
-  <header class="w-full bg-white/95 backdrop-blur-md px-4 py-2.5 shadow-md flex items-center justify-between z-20 border-b border-sky-100">
+  <header class="w-full bg-white/95 backdrop-blur-md px-3 sm:px-4 py-2.5 shadow-md flex items-center justify-between z-20 border-b border-sky-100">
     <!-- Brand / Title -->
-    <div class="flex items-center gap-2.5">
+    <div class="flex items-center gap-2">
       <div class="w-10 h-10 rounded-2xl bg-amber-400 text-slate-900 flex items-center justify-center text-xl shadow-md border-2 border-amber-500">
         <i class="fas fa-truck-pickup"></i>
       </div>
       <div>
-        <h1 class="text-base sm:text-lg font-bold text-slate-800 leading-tight">Truk Pasir Ceria</h1>
-        <p class="text-[11px] text-sky-600 font-semibold flex items-center gap-1">
-          <i class="fas fa-circle text-[7px] text-emerald-500 animate-ping"></i>
-          <span>Simulator Petualangan Anak</span>
-        </p>
+        <h1 class="text-sm sm:text-base font-bold text-slate-800 leading-tight">Truk Pasir Ceria</h1>
+        <div id="levelBadgeDisplay" class="text-[11px] font-bold text-sky-600 flex items-center gap-1">
+          <span class="px-1.5 py-0.2 bg-sky-100 rounded text-sky-700">Lv.1</span>
+          <span>Bukit Hijau Ceria</span>
+        </div>
       </div>
     </div>
 
-    <!-- Controls & Palette -->
-    <div class="flex items-center gap-2 sm:gap-4">
+    <!-- Level Buttons & Quick Actions -->
+    <div class="flex items-center gap-1.5 sm:gap-3">
+      <!-- Pilihan Level Cepat (Bagus untuk YouTube Recording) -->
+      <div class="flex items-center gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200">
+        <button onclick="selectLevel(1)" id="btnLvl1" class="px-2 py-1 rounded-lg text-xs font-bold bg-amber-400 text-slate-900 shadow-sm transition">Lv.1</button>
+        <button onclick="selectLevel(2)" id="btnLvl2" class="px-2 py-1 rounded-lg text-xs font-bold text-slate-600 hover:bg-slate-200 transition">Lv.2</button>
+        <button onclick="selectLevel(3)" id="btnLvl3" class="px-2 py-1 rounded-lg text-xs font-bold text-slate-600 hover:bg-slate-200 transition">Lv.3</button>
+      </div>
+
       <!-- Bintang Skor -->
-      <div class="flex items-center gap-1.5 px-3 py-1 bg-amber-50 border-2 border-amber-300 rounded-full text-amber-700 font-bold text-sm shadow-sm">
-        <i class="fas fa-star text-amber-500 text-base"></i>
+      <div class="flex items-center gap-1 px-2.5 py-1 bg-amber-50 border-2 border-amber-300 rounded-full text-amber-700 font-bold text-xs sm:text-sm shadow-sm">
+        <i class="fas fa-star text-amber-500 text-sm"></i>
         <span id="starScoreDisplay" class="font-mono">0</span>
       </div>
 
-      <!-- Pilih Warna Truk -->
-      <div class="flex items-center gap-1 bg-slate-100 p-1 rounded-full border border-slate-200">
-        <button onclick="setTruckColor('#facc15')" class="w-6 h-6 rounded-full bg-yellow-400 border-2 border-white hover:scale-110 transition shadow" title="Kuning Ceria"></button>
-        <button onclick="setTruckColor('#ef4444')" class="w-6 h-6 rounded-full bg-red-500 border-2 border-white hover:scale-110 transition shadow" title="Merah Berani"></button>
-        <button onclick="setTruckColor('#3b82f6')" class="w-6 h-6 rounded-full bg-blue-500 border-2 border-white hover:scale-110 transition shadow" title="Biru Gagah"></button>
-        <button onclick="setTruckColor('#10b981')" class="w-6 h-6 rounded-full bg-emerald-500 border-2 border-white hover:scale-110 transition shadow" title="Hijau Segar"></button>
+      <!-- Palet Warna Truk -->
+      <div class="hidden sm:flex items-center gap-1 bg-slate-100 p-1 rounded-full border border-slate-200">
+        <button onclick="setTruckColor('#facc15')" class="w-6 h-6 rounded-full bg-yellow-400 border-2 border-white hover:scale-110 transition shadow-sm"></button>
+        <button onclick="setTruckColor('#ef4444')" class="w-6 h-6 rounded-full bg-red-500 border-2 border-white hover:scale-110 transition shadow-sm"></button>
+        <button onclick="setTruckColor('#3b82f6')" class="w-6 h-6 rounded-full bg-blue-500 border-2 border-white hover:scale-110 transition shadow-sm"></button>
+        <button onclick="setTruckColor('#10b981')" class="w-6 h-6 rounded-full bg-emerald-500 border-2 border-white hover:scale-110 transition shadow-sm"></button>
       </div>
 
-      <!-- Tombol Fullscreen (Bagus untuk Rekam Layar YouTube) -->
-      <button onclick="toggleFullscreen()" class="w-9 h-9 rounded-xl bg-sky-500 hover:bg-sky-600 text-white flex items-center justify-center text-sm shadow btn-3d" title="Layar Penuh">
+      <!-- Fullscreen Button -->
+      <button onclick="toggleFullscreen()" class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-sky-500 hover:bg-sky-600 text-white flex items-center justify-center text-xs sm:text-sm shadow btn-3d" title="Layar Penuh">
         <i class="fas fa-expand"></i>
       </button>
     </div>
   </header>
 
   <!-- ========================================== -->
-  <!-- 2. GAME CANVAS CONTAINER (16:9 PROPORTIONAL) -->
+  <!-- 2. GAME CANVAS CONTAINER (16:9 RATIO)     -->
   <!-- ========================================== -->
   <main class="relative flex-1 w-full max-w-5xl mx-auto flex flex-col items-center justify-center p-2 sm:p-4">
     <div id="gameContainer" class="relative w-full aspect-[16/9] max-h-[70vh] bg-sky-300 rounded-2xl overflow-hidden shadow-2xl border-4 border-white flex items-center justify-center">
@@ -97,9 +102,9 @@
         <div class="w-20 h-20 rounded-3xl bg-amber-400 text-slate-900 flex items-center justify-center text-4xl shadow-xl mb-4 border-4 border-white animate-bounce">
           <i class="fas fa-truck-monster"></i>
         </div>
-        <h2 class="text-2xl sm:text-3xl font-extrabold text-white drop-shadow mb-2">Ayo Main Truk Pasir! 🚚</h2>
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-white drop-shadow mb-2">Petualangan Truk Pasir 3 Level! 🚚</h2>
         <p class="text-xs sm:text-sm text-sky-200 max-w-md mb-6 leading-relaxed">
-          Isi pasir warna-warni di corong, kendarai melewati bukit rumput, bunyikan klakson telolet, dan tumpahkan pasir di garis finish!
+          Pilih level favoritmu! Lewati bukit hijau, terobos genangan lumpur ciprat, dan seberangi jembatan kayu goyang tanpa menumpahkan pasir!
         </p>
         <button onclick="startGame()" class="px-8 py-3.5 bg-emerald-500 hover:bg-emerald-400 text-white text-base sm:text-lg font-bold rounded-2xl border-b-4 border-emerald-700 btn-3d flex items-center gap-2 shadow-xl animate-pulse">
           <i class="fas fa-play"></i>
@@ -107,17 +112,40 @@
         </button>
       </div>
 
-      <!-- Toast Selebrasi Garis Akhir -->
-      <div id="celebrationBanner" class="hidden absolute top-6 px-6 py-2.5 bg-amber-400 border-2 border-white rounded-2xl text-slate-900 font-extrabold text-sm sm:text-base shadow-2xl flex items-center gap-2 animate-bounce z-10">
-        <i class="fas fa-trophy text-amber-800 text-xl"></i>
-        <span>HOREEE! PASIR BERHASIL DITUMPAHKAN! ⭐️ +50</span>
+      <!-- MODAL KEMENANGAN NAIK LEVEL (3 STAR RATING) -->
+      <div id="levelClearModal" class="hidden absolute inset-0 bg-slate-950/80 backdrop-blur-md flex flex-col items-center justify-center p-6 text-center z-25 animate-in fade-in zoom-in-95 duration-200">
+        <div class="w-16 h-16 rounded-3xl bg-amber-400 text-slate-900 flex items-center justify-center text-3xl shadow-xl mb-3 border-4 border-white animate-bounce">
+          <i class="fas fa-trophy"></i>
+        </div>
+        
+        <h3 id="clearTitle" class="text-xl sm:text-2xl font-black text-white mb-1">LEVEL 1 BERHASIL DITAKLUKKAN! 🎉</h3>
+        <p id="clearSubtitle" class="text-xs sm:text-sm text-amber-200 mb-4">Semua pasir berhasil diantar dengan selamat!</p>
+
+        <!-- Rating 3 Bintang Emas -->
+        <div class="flex items-center justify-center gap-3 text-4xl mb-6">
+          <i id="star1" class="fas fa-star text-amber-400 drop-shadow"></i>
+          <i id="star2" class="fas fa-star text-amber-400 drop-shadow"></i>
+          <i id="star3" class="fas fa-star text-amber-400 drop-shadow"></i>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <button onclick="retryCurrentLevel()" class="px-5 py-3 rounded-2xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs sm:text-sm border-b-4 border-slate-950 btn-3d flex items-center gap-1.5 shadow">
+            <i class="fas fa-rotate-left text-amber-400"></i>
+            <span>Ulangi</span>
+          </button>
+          
+          <button id="btnNextLevel" onclick="nextLevel()" class="px-7 py-3 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-white font-bold text-sm sm:text-base border-b-4 border-emerald-700 btn-3d flex items-center gap-2 shadow-xl">
+            <span>LANJUT LEVEL BERIKUTNYA</span>
+            <i class="fas fa-arrow-right"></i>
+          </button>
+        </div>
       </div>
 
       <!-- Indikator Muatan di Pojok Atas Layar -->
       <div class="absolute top-3 left-3 bg-white/90 backdrop-blur px-3 py-1.5 rounded-xl border border-slate-200 shadow-md flex items-center gap-2 text-xs font-bold text-slate-700 pointer-events-none">
         <i class="fas fa-box text-amber-500 text-sm"></i>
         <span>Muatan Bak:</span>
-        <div class="w-24 h-3.5 bg-slate-200 rounded-full overflow-hidden border border-slate-300 p-0.5">
+        <div class="w-20 sm:w-24 h-3.5 bg-slate-200 rounded-full overflow-hidden border border-slate-300 p-0.5">
           <div id="cargoProgressBar" class="h-full bg-emerald-500 rounded-full transition-all duration-150" style="width: 0%;"></div>
         </div>
         <span id="cargoPercentDisplay" class="font-mono text-emerald-600">0%</span>
@@ -183,11 +211,11 @@
   </section>
 
   <!-- ============================================================== -->
-  <!-- 🚚 JAVASCRIPT: DUAL-WHEEL CONTACT PHYSICS & DETAILED CARTOON -->
+  <!-- 🚚 JAVASCRIPT: 3 LEVEL MULTI-WORLD, WATER SPLASH, SUSPENSION   -->
   <!-- ============================================================== -->
   <script>
     // ---------------------------------------------------------------
-    // 1. AUDIO SYNTHESIZER (Web Audio API)
+    // 1. WEB AUDIO API SYNTHESIZER
     // ---------------------------------------------------------------
     let audioCtx = null;
     function initAudio() {
@@ -198,7 +226,6 @@
     function playTeloletHorn() {
       initAudio();
       const now = audioCtx.currentTime;
-      // Arpeggio Melodi Basuri Telolet
       const notes = [261.63, 329.63, 392.00, 523.25, 440.00, 523.25, 659.25];
       const step = 0.085;
 
@@ -220,6 +247,38 @@
       const btn = document.getElementById('btnHonk');
       btn.classList.add('horn-active');
       setTimeout(() => btn.classList.remove('horn-active'), 600);
+    }
+
+    function playSplashSound() {
+      if (!audioCtx) return;
+      const now = audioCtx.currentTime;
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(450, now);
+      osc.frequency.exponentialRampToValueAtTime(80, now + 0.15);
+      gain.gain.setValueAtTime(0.22, now);
+      gain.gain.linearRampToValueAtTime(0.01, now + 0.16);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(now);
+      osc.stop(now + 0.17);
+    }
+
+    function playBridgeCreakSound() {
+      if (!audioCtx) return;
+      const now = audioCtx.currentTime;
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(140 + Math.random() * 50, now);
+      osc.frequency.setValueAtTime(110, now + 0.1);
+      gain.gain.setValueAtTime(0.1, now);
+      gain.gain.linearRampToValueAtTime(0.01, now + 0.1);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(now);
+      osc.stop(now + 0.12);
     }
 
     function playDropSound() {
@@ -244,8 +303,8 @@
       const osc = audioCtx.createOscillator();
       const gain = audioCtx.createGain();
       osc.type = 'triangle';
-      osc.frequency.setValueAtTime(1046.50, now); // C6
-      osc.frequency.setValueAtTime(1318.51, now + 0.07); // E6
+      osc.frequency.setValueAtTime(1046.50, now);
+      osc.frequency.setValueAtTime(1318.51, now + 0.07);
       gain.gain.setValueAtTime(0.18, now);
       gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
       osc.connect(gain);
@@ -254,7 +313,7 @@
       osc.stop(now + 0.32);
     }
 
-    function playCelebrationSound() {
+    function playFanfareSound() {
       if (!audioCtx) return;
       const now = audioCtx.currentTime;
       const fanfare = [523.25, 659.25, 783.99, 1046.50, 1318.51];
@@ -273,7 +332,82 @@
     }
 
     // ---------------------------------------------------------------
-    // 2. KANVAS & KONTUR TANAH
+    // 2. KONFIGURASI 3 LEVEL & TANTANGAN
+    // ---------------------------------------------------------------
+    const LEVELS = {
+      1: {
+        name: 'Bukit Hijau Ceria',
+        worldLength: 3200,
+        skyColors: ['#38bdf8', '#bae6fd', '#e0f2fe'],
+        grassColor: '#22c55e',
+        soilColor: '#5c2d13',
+        mudPits: [],
+        hasBridge: false,
+        cargoName: 'Pasir Emas',
+        cargoColors: ['#f59e0b', '#d97706', '#fbbf24', '#f43f5e']
+      },
+      2: {
+        name: 'Jalanan Lumpur & Cipratan Air',
+        worldLength: 3600,
+        skyColors: ['#60a5fa', '#93c5fd', '#bfdbfe'],
+        grassColor: '#16a34a',
+        soilColor: '#451a03',
+        mudPits: [
+          { x: 1100, width: 260, depth: 16 },
+          { x: 2200, width: 300, depth: 22 }
+        ],
+        hasBridge: false,
+        cargoName: 'Apel & Batu Kerikil',
+        cargoColors: ['#ef4444', '#dc2626', '#78716c', '#57534e']
+      },
+      3: {
+        name: 'Jembatan Kayu Goyang',
+        worldLength: 4000,
+        skyColors: ['#fb923c', '#fdba74', '#fed7aa'], // Nuansa Sore Menantang
+        grassColor: '#65a30d',
+        soilColor: '#3f1d0b',
+        mudPits: [{ x: 900, width: 220, depth: 14 }],
+        hasBridge: true,
+        bridge: { x: 1800, width: 500, sag: 38 },
+        cargoName: 'Permen Jelly Pelangi',
+        cargoColors: ['#ec4899', '#8b5cf6', '#3b82f6', '#10b981', '#f59e0b']
+      }
+    };
+
+    let currentLevelId = 1;
+    let currentLevelConfig = LEVELS[1];
+
+    // Kontur Tanah Berdasarkan Level
+    function getGroundY(worldX) {
+      const baseGround = 560;
+      
+      // Jembatan Gantung di Level 3
+      if (currentLevelConfig.hasBridge) {
+        const br = currentLevelConfig.bridge;
+        if (worldX >= br.x && worldX <= br.x + br.width) {
+          const prog = (worldX - br.x) / br.width;
+          const curve = Math.sin(prog * Math.PI) * br.sag;
+          return 530 + curve; // Ketinggian jembatan
+        }
+      }
+
+      // Genangan Lumpur Cekung di Level 2 & 3
+      for (let pit of currentLevelConfig.mudPits) {
+        if (worldX >= pit.x && worldX <= pit.x + pit.width) {
+          const prog = (worldX - pit.x) / pit.width;
+          const dip = Math.sin(prog * Math.PI) * pit.depth;
+          return baseGround + dip;
+        }
+      }
+
+      // Kontur bukit normal
+      const wave1 = Math.sin(worldX * 0.003) * 45;
+      const wave2 = Math.sin(worldX * 0.008) * 18;
+      return baseGround + wave1 + wave2;
+    }
+
+    // ---------------------------------------------------------------
+    // 3. CANVAS & FISIKA TRUK DENGAN DUAL-WHEEL CONTACT
     // ---------------------------------------------------------------
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
@@ -284,21 +418,11 @@
 
     let isGameRunning = false;
     let scoreStars = 0;
-    let truckColor = '#facc15'; // Kuning default
+    let levelCollectedStars = 0;
+    let truckColor = '#facc15';
 
-    // Kontur Tanah Berbukit Halus
-    function getGroundY(worldX) {
-      const baseGround = 560;
-      const wave1 = Math.sin(worldX * 0.003) * 45;
-      const wave2 = Math.sin(worldX * 0.008) * 18;
-      return baseGround + wave1 + wave2;
-    }
-
-    // ---------------------------------------------------------------
-    // 3. MODEL FISIKA TRUK & KONTAK RODA KE TANAH
-    // ---------------------------------------------------------------
-    const WHEEL_SPAN = 54;    // Jarak dari pusat truk ke roda depan/belakang
-    const WHEEL_RADIUS = 25;  // Radius roda truk
+    const WHEEL_SPAN = 54;
+    const WHEEL_RADIUS = 25;
 
     const truck = {
       x: 180,
@@ -319,15 +443,47 @@
       isBlinking: false
     };
 
-    const WORLD_LENGTH = 3800;
-    const loadingStation = { x: 260, y: 320 };
-    const dumpStation = { x: 3400, y: 440 };
+    const loadingStation = { x: 260 };
+    let dumpStation = { x: 3000 };
 
-    // Koin Bintang
     let stars = [];
-    function initStars() {
+    let scenery = [];
+    let splashParticles = [];
+    let smokeParticles = [];
+    let confettiParticles = [];
+    const keys = { right: false, left: false };
+
+    function selectLevel(lvl) {
+      currentLevelId = lvl;
+      currentLevelConfig = LEVELS[lvl];
+      dumpStation.x = currentLevelConfig.worldLength - 400;
+
+      // Update UI Header
+      document.getElementById('btnLvl1').className = lvl === 1 ? 'px-2 py-1 rounded-lg text-xs font-bold bg-amber-400 text-slate-900 shadow-sm' : 'px-2 py-1 rounded-lg text-xs font-bold text-slate-600 hover:bg-slate-200';
+      document.getElementById('btnLvl2').className = lvl === 2 ? 'px-2 py-1 rounded-lg text-xs font-bold bg-amber-400 text-slate-900 shadow-sm' : 'px-2 py-1 rounded-lg text-xs font-bold text-slate-600 hover:bg-slate-200';
+      document.getElementById('btnLvl3').className = lvl === 3 ? 'px-2 py-1 rounded-lg text-xs font-bold bg-amber-400 text-slate-900 shadow-sm' : 'px-2 py-1 rounded-lg text-xs font-bold text-slate-600 hover:bg-slate-200';
+      
+      document.getElementById('levelBadgeDisplay').innerHTML = `
+        <span class="px-1.5 py-0.2 bg-sky-100 rounded text-sky-700">Lv.${lvl}</span>
+        <span>${currentLevelConfig.name}</span>
+      `;
+
+      resetLevel();
+    }
+
+    function resetLevel() {
+      truck.x = 180;
+      truck.vx = 0;
+      truck.bedAngle = 0;
+      truck.isDumping = false;
+      truck.cargoPercent = 0;
+      truck.cargoParticles = [];
+      levelCollectedStars = 0;
+      updateCargoUI();
+
+      // Inisialisasi Bintang
       stars = [];
-      for (let x = 500; x < WORLD_LENGTH - 400; x += 190 + Math.random() * 110) {
+      for (let x = 500; x < currentLevelConfig.worldLength - 450; x += 180 + Math.random() * 110) {
         stars.push({
           x: x,
           y: getGroundY(x) - 75 - Math.sin(x * 0.01) * 35,
@@ -335,13 +491,10 @@
           animOffset: Math.random() * Math.PI * 2
         });
       }
-    }
 
-    // Pohon Kartun & Bunga di Pinggir Jalan
-    let scenery = [];
-    function initScenery() {
+      // Inisialisasi Pohon & Bunga
       scenery = [];
-      for (let x = 100; x < WORLD_LENGTH; x += 160 + Math.random() * 180) {
+      for (let x = 120; x < currentLevelConfig.worldLength; x += 150 + Math.random() * 160) {
         if (Math.abs(x - loadingStation.x) > 200 && Math.abs(x - dumpStation.x) > 250) {
           scenery.push({
             x: x,
@@ -351,11 +504,9 @@
           });
         }
       }
-    }
 
-    let smokeParticles = [];
-    let confettiParticles = [];
-    const keys = { right: false, left: false };
+      document.getElementById('levelClearModal').classList.add('hidden');
+    }
 
     function setTruckColor(c) { truckColor = c; }
 
@@ -377,7 +528,7 @@
             truck.cargoParticles.push({
               x: -40 + Math.random() * 75,
               y: -12 - Math.random() * 26,
-              color: ['#f59e0b', '#d97706', '#fbbf24', '#f43f5e', '#38bdf8', '#10b981'][Math.floor(Math.random() * 6)],
+              color: currentLevelConfig.cargoColors[Math.floor(Math.random() * currentLevelConfig.cargoColors.length)],
               size: 3 + Math.random() * 4
             });
           }
@@ -396,10 +547,11 @@
         } else {
           clearInterval(dumpTimer);
           if (truck.cargoPercent > 0) {
+            const savedCargo = truck.cargoPercent;
             truck.cargoPercent = 0;
             updateCargoUI();
-            playCelebrationSound();
-            showCelebration();
+            playFanfareSound();
+            showLevelClearModal(savedCargo);
             createConfetti(truck.x - 70, truck.y - 10);
           }
 
@@ -413,17 +565,50 @@
                 clearInterval(lowerTimer);
               }
             }, 30);
-          }, 1200);
+          }, 1500);
         }
       }, 30);
     }
 
-    function showCelebration() {
+    function showLevelClearModal(finalCargo) {
       scoreStars += 50;
       document.getElementById('starScoreDisplay').innerText = scoreStars;
-      const b = document.getElementById('celebrationBanner');
-      b.classList.remove('hidden');
-      setTimeout(() => b.classList.add('hidden'), 3500);
+
+      // Rating 3 Bintang:
+      // Bintang 1: Selesai
+      // Bintang 2: Koin bintang >= 6
+      // Bintang 3: Pasir >= 75%
+      const star1 = document.getElementById('star1');
+      const star2 = document.getElementById('star2');
+      const star3 = document.getElementById('star3');
+
+      star1.className = 'fas fa-star text-amber-400 drop-shadow animate-bounce';
+      star2.className = levelCollectedStars >= 6 ? 'fas fa-star text-amber-400 drop-shadow animate-bounce' : 'fas fa-star text-slate-600';
+      star3.className = finalCargo >= 75 ? 'fas fa-star text-amber-400 drop-shadow animate-bounce' : 'fas fa-star text-slate-600';
+
+      document.getElementById('clearTitle').innerText = `LEVEL ${currentLevelId} BERHASIL DITAKLUKKAN! 🏆`;
+      document.getElementById('clearSubtitle').innerText = `Muatan Terantar: ${finalCargo}% | Koin Bintang: ${levelCollectedStars}`;
+
+      const btnNext = document.getElementById('btnNextLevel');
+      if (currentLevelId < 3) {
+        btnNext.innerHTML = `<span>LANJUT LEVEL ${currentLevelId + 1}</span> <i class="fas fa-arrow-right"></i>`;
+      } else {
+        btnNext.innerHTML = `<span>MAIN DARI AWAL (TAMAT!)</span> <i class="fas fa-trophy"></i>`;
+      }
+
+      document.getElementById('levelClearModal').classList.remove('hidden');
+    }
+
+    function nextLevel() {
+      if (currentLevelId < 3) {
+        selectLevel(currentLevelId + 1);
+      } else {
+        selectLevel(1);
+      }
+    }
+
+    function retryCurrentLevel() {
+      resetLevel();
     }
 
     function createConfetti(x, y) {
@@ -442,15 +627,51 @@
     }
 
     // ---------------------------------------------------------------
-    // 4. FISIKA PERGERAKAN & KONTAK DUA RODA KE TANAH
+    // 4. FISIKA PERGERAKAN, CIPRATAN AIR & RODA MENAPAK TANAH
     // ---------------------------------------------------------------
     function updatePhysics() {
       if (!isGameRunning) return;
 
-      // Gas & Rem
+      // Cek apakah truk sedang di dalam lumpur (Level 2 & 3)
+      let inMud = false;
+      for (let pit of currentLevelConfig.mudPits) {
+        if (truck.x >= pit.x && truck.x <= pit.x + pit.width) {
+          inMud = true;
+          // Buat cipratan air & lumpur
+          if (Math.abs(truck.vx) > 1.5 && Math.random() < 0.4) {
+            playSplashSound();
+            for (let i = 0; i < 4; i++) {
+              splashParticles.push({
+                x: truck.x + (Math.random() - 0.5) * 80,
+                y: truck.y + 16,
+                vx: (Math.random() - 0.5) * 6,
+                vy: -3 - Math.random() * 5,
+                color: Math.random() < 0.6 ? '#60a5fa' : '#78350f',
+                size: 3 + Math.random() * 4,
+                life: 30
+              });
+            }
+          }
+        }
+      }
+
+      // Cek apakah truk di atas jembatan gantung (Level 3)
+      if (currentLevelConfig.hasBridge) {
+        const br = currentLevelConfig.bridge;
+        if (truck.x >= br.x && truck.x <= br.x + br.width) {
+          if (Math.abs(truck.vx) > 2 && Math.random() < 0.08) {
+            playBridgeCreakSound();
+          }
+        }
+      }
+
+      // Kecepatan berkurang saat di lumpur
+      const currentMaxSpeed = inMud ? truck.maxSpeed * 0.55 : truck.maxSpeed;
+      const currentAccel = inMud ? truck.accel * 0.65 : truck.accel;
+
       if (keys.right && !truck.isDumping) {
-        truck.vx = Math.min(truck.maxSpeed, truck.vx + truck.accel);
-        if (Math.random() < 0.4) {
+        truck.vx = Math.min(currentMaxSpeed, truck.vx + currentAccel);
+        if (Math.random() < 0.35) {
           smokeParticles.push({
             x: truck.x - 78,
             y: truck.y - 25,
@@ -461,7 +682,7 @@
           });
         }
       } else if (keys.left && !truck.isDumping) {
-        truck.vx = Math.max(-truck.maxSpeed * 0.6, truck.vx - truck.accel);
+        truck.vx = Math.max(-currentMaxSpeed * 0.6, truck.vx - currentAccel);
       } else {
         truck.vx *= truck.friction;
       }
@@ -469,29 +690,25 @@
       truck.x += truck.vx;
       truck.wheelRotation += (truck.vx / WHEEL_RADIUS);
 
-      // Batasi Dunia
       if (truck.x < 120) { truck.x = 120; truck.vx = 0; }
-      if (truck.x > WORLD_LENGTH - 150) { truck.x = WORLD_LENGTH - 150; truck.vx = 0; }
+      if (truck.x > currentLevelConfig.worldLength - 150) { truck.x = currentLevelConfig.worldLength - 150; truck.vx = 0; }
 
       // ==============================================================
-      // RUMUS RODA MENAPAK PRESISI KE TANAH (DUAL-WHEEL CONTACT PHYSICS)
+      // RUMUS RODA MENAPAK PRESISI KE TANAH (DUAL-WHEEL CONTACT)
       // ==============================================================
       const yBack = getGroundY(truck.x - WHEEL_SPAN);
       const yFront = getGroundY(truck.x + WHEEL_SPAN);
 
-      // Sudut truk mengikuti kemiringan tanah antara kedua roda
       truck.tiltAngle = Math.atan2(yFront - yBack, WHEEL_SPAN * 2);
 
-      // Suspensi membal halus saat jalan
       truck.bounceSpeed += (Math.random() - 0.5) * Math.abs(truck.vx) * 0.45;
       truck.bounceOffset += truck.bounceSpeed;
       truck.bounceOffset *= 0.8;
       truck.bounceSpeed *= 0.8;
 
-      // Ketinggian tengah truk dihitung tepat agar dasar kedua roda menempel ke tanah!
       truck.y = (yBack + yFront) / 2 + truck.bounceOffset;
 
-      // Kedipan Mata Karakter Sopir
+      // Kedipan Mata Sopir Beruang
       truck.blinkTimer++;
       if (truck.blinkTimer > 180) {
         truck.isBlinking = true;
@@ -509,6 +726,7 @@
           if (Math.hypot(dx, dy) < 65) {
             s.collected = true;
             scoreStars += 5;
+            levelCollectedStars++;
             document.getElementById('starScoreDisplay').innerText = scoreStars;
             playCoinSound();
           }
@@ -524,6 +742,15 @@
         if (p.alpha <= 0) smokeParticles.splice(idx, 1);
       });
 
+      // Partikel Cipratan Air
+      splashParticles.forEach((p, idx) => {
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += 0.25; // gravitasi
+        p.life--;
+        if (p.life <= 0) splashParticles.splice(idx, 1);
+      });
+
       // Partikel Konfeti
       confettiParticles.forEach((p, idx) => {
         p.x += p.vx;
@@ -535,50 +762,55 @@
     }
 
     // ---------------------------------------------------------------
-    // 5. RENDERING VISUAL CANTIK & RAPI
+    // 5. RENDERING VISUAL CANTIK
     // ---------------------------------------------------------------
     function draw() {
       ctx.clearRect(0, 0, V_WIDTH, V_HEIGHT);
 
-      const cameraX = Math.max(0, Math.min(WORLD_LENGTH - V_WIDTH, truck.x - V_WIDTH * 0.35));
+      const cameraX = Math.max(0, Math.min(currentLevelConfig.worldLength - V_WIDTH, truck.x - V_WIDTH * 0.35));
 
       ctx.save();
       ctx.translate(-cameraX, 0);
 
-      // 1. Langit & Awan Bertekstur
+      // 1. Langit & Awan
       drawSkyAndBackground(cameraX);
 
-      // 2. Pepohonan & Bunga Latar
+      // 2. Pepohonan
       drawScenery();
 
-      // 3. Stasiun Pasir & Garis Finish
+      // 3. Stasiun Pasir & Finish
       drawStations();
 
-      // 4. Permukaan Tanah & Rumput Hijau (Rapi & Tebal)
+      // 4. Jembatan Gantung Kayu (Jika ada di Level 3)
+      if (currentLevelConfig.hasBridge) {
+        drawWoodenBridge();
+      }
+
+      // 5. Tanah & Genangan Lumpur
       drawGround();
 
-      // 5. Koin Bintang Melayang
+      // 6. Koin Bintang
       drawStars();
 
-      // 6. Truk Pasir Rapi & Sopir Beruang Kartun
+      // 7. Truk Pasir Rapi
       drawTruck();
 
-      // 7. Partikel Asap & Konfeti
+      // 8. Partikel Cipratan Air, Asap & Konfeti
       drawParticles();
 
       ctx.restore();
     }
 
     function drawSkyAndBackground(camX) {
-      // Langit Gradasi Biru Sejuk
+      const colors = currentLevelConfig.skyColors;
       const sky = ctx.createLinearGradient(0, 0, 0, 520);
-      sky.addColorStop(0, '#38bdf8');
-      sky.addColorStop(0.7, '#bae6fd');
-      sky.addColorStop(1, '#e0f2fe');
+      sky.addColorStop(0, colors[0]);
+      sky.addColorStop(0.7, colors[1]);
+      sky.addColorStop(1, colors[2]);
       ctx.fillStyle = sky;
       ctx.fillRect(camX, 0, V_WIDTH, V_HEIGHT);
 
-      // Matahari Kartun Bersinar
+      // Matahari
       const sunX = camX + V_WIDTH - 150;
       const sunY = 110;
       ctx.fillStyle = '#fde047';
@@ -586,25 +818,25 @@
       ctx.arc(sunX, sunY, 46, 0, Math.PI * 2);
       ctx.fill();
 
-      // Kacamata Hitam Keren di Matahari
+      // Kacamata Hitam Matahari
       ctx.fillStyle = '#1e293b';
       ctx.fillRect(sunX - 32, sunY - 10, 28, 14);
       ctx.fillRect(sunX + 4, sunY - 10, 28, 14);
       ctx.fillRect(sunX - 6, sunY - 6, 12, 4);
-      // Senyum Matahari
       ctx.strokeStyle = '#d97706';
       ctx.lineWidth = 3.5;
       ctx.beginPath();
       ctx.arc(sunX, sunY + 12, 14, 0.1 * Math.PI, 0.9 * Math.PI);
       ctx.stroke();
 
-      // Awan Putih Empuk (Parallax)
+      // Awan
       drawCloud(camX + 180 + Math.sin(Date.now() * 0.0005) * 40, 90, 0.9);
       drawCloud(camX + 620 + Math.cos(Date.now() * 0.0004) * 35, 130, 0.75);
       drawCloud(camX + 980 + Math.sin(Date.now() * 0.0003) * 50, 75, 1.1);
 
-      // Bukit Belakang Jauh (Gradasi Hijau Lembut)
-      ctx.fillStyle = '#86efac';
+      // Bukit Belakang
+      ctx.fillStyle = currentLevelConfig.grassColor;
+      ctx.globalAlpha = 0.45;
       ctx.beginPath();
       ctx.moveTo(camX, V_HEIGHT);
       for (let x = camX; x <= camX + V_WIDTH + 60; x += 60) {
@@ -612,6 +844,7 @@
       }
       ctx.lineTo(camX + V_WIDTH + 60, V_HEIGHT);
       ctx.fill();
+      ctx.globalAlpha = 1.0;
     }
 
     function drawCloud(x, y, scale) {
@@ -629,6 +862,33 @@
       ctx.restore();
     }
 
+    function drawWoodenBridge() {
+      const br = currentLevelConfig.bridge;
+      // Tiang Penyangga Jembatan
+      ctx.fillStyle = '#78350f';
+      ctx.fillRect(br.x - 16, 450, 24, 180);
+      ctx.fillRect(br.x + br.width - 8, 450, 24, 180);
+
+      // Tali Gantung Jembatan
+      ctx.strokeStyle = '#d97706';
+      ctx.lineWidth = 5;
+      ctx.beginPath();
+      ctx.moveTo(br.x - 10, 455);
+      ctx.quadraticCurveTo(br.x + br.width / 2, 530 + br.sag, br.x + br.width + 10, 455);
+      ctx.stroke();
+
+      // Papan-papan Kayu Goyang
+      ctx.fillStyle = '#b45309';
+      ctx.strokeStyle = '#451a03';
+      ctx.lineWidth = 2.5;
+
+      for (let x = br.x; x <= br.x + br.width; x += 22) {
+        const by = getGroundY(x);
+        ctx.fillRect(x - 8, by - 6, 18, 12);
+        ctx.strokeRect(x - 8, by - 6, 18, 12);
+      }
+    }
+
     function drawScenery() {
       scenery.forEach(item => {
         const gy = getGroundY(item.x);
@@ -637,19 +897,16 @@
         ctx.scale(item.scale, item.scale);
 
         if (item.type === 'tree') {
-          // Batang Pohon Coklat
           ctx.fillStyle = '#78350f';
           ctx.fillRect(-10, -70, 20, 70);
-          // Daun Rindang Bertingkat
           ctx.fillStyle = '#15803d';
           ctx.beginPath();
           ctx.arc(0, -95, 38, 0, Math.PI * 2);
           ctx.fill();
-          ctx.fillStyle = '#22c55e';
+          ctx.fillStyle = currentLevelConfig.grassColor;
           ctx.beginPath();
           ctx.arc(0, -115, 30, 0, Math.PI * 2);
           ctx.fill();
-          // Buah Apel Merah
           ctx.fillStyle = '#ef4444';
           ctx.beginPath();
           ctx.arc(-14, -100, 5, 0, Math.PI * 2);
@@ -657,10 +914,8 @@
           ctx.arc(8, -86, 5, 0, Math.PI * 2);
           ctx.fill();
         } else {
-          // Bunga Lucu
           ctx.fillStyle = '#16a34a';
           ctx.fillRect(-2, -22, 4, 22);
-          // Kelopak Bunga
           ctx.fillStyle = item.color;
           for (let i = 0; i < 5; i++) {
             const rad = (i * Math.PI * 2) / 5;
@@ -668,7 +923,6 @@
             ctx.arc(Math.cos(rad) * 9, -24 + Math.sin(rad) * 9, 6, 0, Math.PI * 2);
             ctx.fill();
           }
-          // Inti Bunga Kuning
           ctx.fillStyle = '#fde047';
           ctx.beginPath();
           ctx.arc(0, -24, 5, 0, Math.PI * 2);
@@ -679,49 +933,42 @@
     }
 
     function drawGround() {
-      // 1. Lapisan Bawah Tanah (Earth / Soil)
-      ctx.fillStyle = '#5c2d13';
+      // 1. Lapisan Bawah Tanah
+      ctx.fillStyle = currentLevelConfig.soilColor;
       ctx.beginPath();
       ctx.moveTo(0, V_HEIGHT);
-      for (let x = 0; x <= WORLD_LENGTH; x += 25) {
+      for (let x = 0; x <= currentLevelConfig.worldLength; x += 25) {
         ctx.lineTo(x, getGroundY(x));
       }
-      ctx.lineTo(WORLD_LENGTH, V_HEIGHT);
+      ctx.lineTo(currentLevelConfig.worldLength, V_HEIGHT);
       ctx.fill();
 
-      // 2. Lapisan Tanah Subur Sedang
-      ctx.fillStyle = '#854d0e';
-      ctx.beginPath();
-      ctx.moveTo(0, V_HEIGHT);
-      for (let x = 0; x <= WORLD_LENGTH; x += 25) {
-        ctx.lineTo(x, getGroundY(x) + 8);
-      }
-      ctx.lineTo(WORLD_LENGTH, V_HEIGHT);
-      ctx.fill();
-
-      // 3. Lapisan Rumput Hijau Tebal di Permukaan (Ground Edge)
-      ctx.strokeStyle = '#22c55e';
+      // 2. Lapisan Rumput Hijau Tebal di Permukaan
+      ctx.strokeStyle = currentLevelConfig.grassColor;
       ctx.lineWidth = 14;
       ctx.lineCap = 'round';
       ctx.lineJoin = 'round';
       ctx.beginPath();
-      for (let x = 0; x <= WORLD_LENGTH; x += 25) {
+      for (let x = 0; x <= currentLevelConfig.worldLength; x += 25) {
         if (x === 0) ctx.moveTo(x, getGroundY(x));
         else ctx.lineTo(x, getGroundY(x));
       }
       ctx.stroke();
 
-      // Rumput-rumput kecil tegak (*grass tufts*)
-      ctx.strokeStyle = '#15803d';
-      ctx.lineWidth = 3;
-      for (let x = 20; x < WORLD_LENGTH; x += 65) {
-        const gy = getGroundY(x);
+      // 3. Genangan Lumpur & Air Berkilau (Level 2 & 3)
+      for (let pit of currentLevelConfig.mudPits) {
+        const py = getGroundY(pit.x + pit.width / 2);
+        // Air Lumpur
+        ctx.fillStyle = '#78350f';
         ctx.beginPath();
-        ctx.moveTo(x, gy - 2);
-        ctx.lineTo(x - 4, gy - 12);
-        ctx.moveTo(x, gy - 2);
-        ctx.lineTo(x + 4, gy - 14);
-        ctx.stroke();
+        ctx.ellipse(pit.x + pit.width / 2, py + 2, pit.width / 2, pit.depth, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Kilauan Air Biru Muda di Atas Lumpur
+        ctx.fillStyle = 'rgba(96, 165, 250, 0.75)';
+        ctx.beginPath();
+        ctx.ellipse(pit.x + pit.width / 2, py - 1, pit.width / 2 - 12, pit.depth * 0.6, 0, 0, Math.PI * 2);
+        ctx.fill();
       }
     }
 
@@ -730,12 +977,10 @@
       const lx = loadingStation.x;
       const ly = getGroundY(lx);
 
-      // Tiang Baja Kokoh
       ctx.fillStyle = '#475569';
       ctx.fillRect(lx - 14, ly - 240, 28, 240);
       ctx.fillRect(lx - 90, ly - 240, 180, 26);
 
-      // Corong Pipa Kuning Besar
       ctx.fillStyle = '#f59e0b';
       ctx.strokeStyle = '#b45309';
       ctx.lineWidth = 3;
@@ -748,32 +993,28 @@
       ctx.fill();
       ctx.stroke();
 
-      // Papan Teks "STASIUN PASIR"
       ctx.fillStyle = '#ef4444';
       ctx.fillRect(lx - 85, ly - 280, 170, 36);
       ctx.strokeStyle = '#ffffff';
       ctx.lineWidth = 3;
       ctx.strokeRect(lx - 85, ly - 280, 170, 36);
       ctx.fillStyle = '#ffffff';
-      ctx.font = 'bold 16px Fredoka';
+      ctx.font = 'bold 15px Fredoka';
       ctx.textAlign = 'center';
-      ctx.fillText('STASIUN PASIR', lx, flyText(ly - 256));
+      ctx.fillText(`STASIUN ${currentLevelConfig.cargoName.toUpperCase()}`, lx, ly - 256);
 
       // 2. Stasiun Tumpah (Finish)
       const dx = dumpStation.x;
       const dy = getGroundY(dx);
 
-      // Bak Penampungan Pasir Beton
       ctx.fillStyle = '#334155';
       ctx.fillRect(dx - 65, dy - 65, 130, 70);
       ctx.fillStyle = '#d97706';
       ctx.fillRect(dx - 55, dy - 55, 110, 60);
 
-      // Tiang & Bendera Finish Kotak-Kotak
       ctx.fillStyle = '#64748b';
       ctx.fillRect(dx + 70, dy - 190, 10, 190);
 
-      // Bendera Hijau Finish
       ctx.fillStyle = '#10b981';
       ctx.beginPath();
       ctx.moveTo(dx + 80, dy - 190);
@@ -785,8 +1026,6 @@
       ctx.font = 'bold 15px Fredoka';
       ctx.fillText('FINISH', dx + 115, dy - 162);
     }
-
-    function flyText(y) { return y; }
 
     function drawStars() {
       stars.forEach(s => {
@@ -811,13 +1050,10 @@
       });
     }
 
-    // ==============================================================
-    // 6. GAMBAR TRUK PASIR DETAIL & SOPIR BERUANG KARTUN
-    // ==============================================================
     function drawTruck() {
-      // 1. Gambar Bayangan Lembut di Permukaan Tanah (Menempel Sempurna)
+      // 1. Bayangan Menapak Lembut di Permukaan Tanah
       ctx.save();
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.22)';
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.24)';
       ctx.beginPath();
       ctx.ellipse(truck.x, getGroundY(truck.x) + 4, 85, 12, truck.tiltAngle, 0, Math.PI * 2);
       ctx.fill();
@@ -827,7 +1063,7 @@
       ctx.translate(truck.x, truck.y);
       ctx.rotate(truck.tiltAngle);
 
-      // --- SASIS BAJA HITAM TRUK ---
+      // Sasis Truk Baja Hitam
       ctx.fillStyle = '#0f172a';
       ctx.roundRect(-85, -24, 170, 16, 6);
       ctx.fill();
@@ -843,16 +1079,14 @@
       // Knalpot Vertikal Krom
       ctx.fillStyle = '#94a3b8';
       ctx.fillRect(-78, -55, 8, 34);
-      // Tutup Knalpot Goyang
       ctx.fillStyle = '#64748b';
       ctx.fillRect(-82, -58, 14, 4);
 
       // --- BAK TRUK (DUMP BED) YANG MENJUNGKIT ---
       ctx.save();
-      ctx.translate(-24, -24); // Titik poros hidrolik jungkit
+      ctx.translate(-24, -24);
       ctx.rotate(-truck.bedAngle);
 
-      // Silinder Hidrolik Baja saat Mengangkat
       if (truck.bedAngle > 0.02) {
         ctx.strokeStyle = '#cbd5e1';
         ctx.lineWidth = 8;
@@ -862,7 +1096,6 @@
         ctx.stroke();
       }
 
-      // Bodi Bak Truk (Bentuk Dump Truck Modern yang Kokoh)
       ctx.fillStyle = truckColor;
       ctx.strokeStyle = '#0f172a';
       ctx.lineWidth = 4;
@@ -870,14 +1103,13 @@
       ctx.moveTo(-60, 0);
       ctx.lineTo(44, 0);
       ctx.lineTo(48, -48);
-      ctx.lineTo(60, -56); // Pelindung kabin atas (cab protector)
+      ctx.lineTo(60, -56);
       ctx.lineTo(48, -56);
       ctx.lineTo(-65, -50);
       ctx.closePath();
       ctx.fill();
       ctx.stroke();
 
-      // Garis Rusuk Panel Logam Bak (3D Ribbed Style)
       ctx.strokeStyle = 'rgba(0, 0, 0, 0.18)';
       ctx.lineWidth = 3;
       ctx.beginPath();
@@ -886,7 +1118,6 @@
       ctx.moveTo(15, -4);  ctx.lineTo(15, -46);
       ctx.stroke();
 
-      // Pasir Warna-Warni di dalam Bak Truk
       if (truck.cargoPercent > 0) {
         const fillHeight = (truck.cargoPercent / 100) * 42;
         ctx.fillStyle = '#f59e0b';
@@ -898,7 +1129,6 @@
         ctx.closePath();
         ctx.fill();
 
-        // Butiran Pasir Bertebaran
         truck.cargoParticles.forEach(p => {
           ctx.fillStyle = p.color;
           ctx.beginPath();
@@ -908,7 +1138,7 @@
       }
       ctx.restore();
 
-      // --- KABIN TRUK DEPAN & SOPIR KARTUN ---
+      // --- KABIN TRUK DEPAN & SOPIR BERUANG ---
       ctx.fillStyle = truckColor;
       ctx.strokeStyle = '#0f172a';
       ctx.lineWidth = 4;
@@ -917,7 +1147,6 @@
       ctx.fill();
       ctx.stroke();
 
-      // Kaca Jendela Kabin
       ctx.fillStyle = '#e0f2fe';
       ctx.strokeStyle = '#0f172a';
       ctx.lineWidth = 3;
@@ -926,7 +1155,6 @@
       ctx.fill();
       ctx.stroke();
 
-      // Pantulan Cahaya Putih di Kaca
       ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
       ctx.beginPath();
       ctx.moveTo(52, -66);
@@ -936,23 +1164,20 @@
       ctx.closePath();
       ctx.fill();
 
-      // --- KARAKTER SOPIR BERUANG KARTUN LUCU DI KACA ---
-      // Kepala Beruang Coklat
+      // Sopir Beruang Kartun
       ctx.fillStyle = '#92400e';
       ctx.beginPath();
       ctx.arc(62, -52, 9, 0, Math.PI * 2);
       ctx.fill();
-      // Telinga Beruang
       ctx.beginPath();
       ctx.arc(55, -60, 4, 0, Math.PI * 2);
       ctx.arc(69, -60, 4, 0, Math.PI * 2);
       ctx.fill();
-      // Topi Helm Proyek Kuning
       ctx.fillStyle = '#eab308';
       ctx.beginPath();
       ctx.arc(62, -57, 8, Math.PI, 0);
       ctx.fill();
-      // Mata Beruang (Bisa Berkedip)
+
       ctx.fillStyle = '#0f172a';
       if (!truck.isBlinking) {
         ctx.beginPath();
@@ -965,14 +1190,14 @@
         ctx.moveTo(63, -53); ctx.lineTo(67, -53);
         ctx.stroke();
       }
-      // Setir Mobil di Tangan Beruang
+
       ctx.strokeStyle = '#334155';
       ctx.lineWidth = 2.5;
       ctx.beginPath();
       ctx.arc(72, -44, 6, 0.4 * Math.PI, 1.6 * Math.PI);
       ctx.stroke();
 
-      // Grill Depan Radiator Krom Bertingkat
+      // Grill Radiator Krom
       ctx.fillStyle = '#e2e8f0';
       ctx.strokeStyle = '#0f172a';
       ctx.lineWidth = 3;
@@ -980,7 +1205,6 @@
       ctx.fill();
       ctx.stroke();
 
-      // Garis Kisi Grill
       ctx.strokeStyle = '#475569';
       ctx.lineWidth = 1.5;
       ctx.beginPath();
@@ -989,7 +1213,7 @@
       ctx.moveTo(85, -26); ctx.lineTo(91, -26);
       ctx.stroke();
 
-      // Lampu Depan Kristal Kuning Bercahaya
+      // Lampu Depan
       ctx.fillStyle = '#fef08a';
       ctx.strokeStyle = '#0f172a';
       ctx.lineWidth = 3;
@@ -998,12 +1222,12 @@
       ctx.fill();
       ctx.stroke();
 
-      // Bemper Depan Baja Abu-abu
+      // Bemper Depan
       ctx.fillStyle = '#475569';
       ctx.roundRect(80, -20, 18, 12, 3);
       ctx.fill();
 
-      // --- DUA RODA BESAR DENGAN TAPAK OFF-ROAD ---
+      // RODA OFF-ROAD MENAPAK PRESISI
       drawSolidWheel(-WHEEL_SPAN, 0, truck.wheelRotation);
       drawSolidWheel(WHEEL_SPAN, 0, truck.wheelRotation);
 
@@ -1015,13 +1239,11 @@
       ctx.translate(wx, wy);
       ctx.rotate(rot);
 
-      // 1. Ban Karet Hitam Pekat
       ctx.fillStyle = '#0f172a';
       ctx.beginPath();
       ctx.arc(0, 0, WHEEL_RADIUS, 0, Math.PI * 2);
       ctx.fill();
 
-      // 2. Tapak Gerigi Ban Off-Road Kartun (Chunky Tire Treads)
       ctx.fillStyle = '#1e293b';
       for (let i = 0; i < 8; i++) {
         const rad = (i * Math.PI) / 4;
@@ -1030,7 +1252,6 @@
         ctx.fill();
       }
 
-      // 3. Velg Alloy Abu-abu Perak
       ctx.fillStyle = '#e2e8f0';
       ctx.strokeStyle = '#64748b';
       ctx.lineWidth = 2.5;
@@ -1039,7 +1260,6 @@
       ctx.fill();
       ctx.stroke();
 
-      // 4. Tutup As Roda Tengah (Hub Cap) & 5 Baut
       ctx.fillStyle = '#0284c7';
       ctx.beginPath();
       ctx.arc(0, 0, 5, 0, Math.PI * 2);
@@ -1065,7 +1285,15 @@
         ctx.fill();
       });
 
-      // Konfeti Kemenangan
+      // Cipratan Lumpur & Air
+      splashParticles.forEach(p => {
+        ctx.fillStyle = p.color;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      // Konfeti
       confettiParticles.forEach(p => {
         ctx.fillStyle = p.color;
         ctx.fillRect(p.x, p.y, p.size, p.size);
@@ -1073,7 +1301,7 @@
     }
 
     // ---------------------------------------------------------------
-    // 7. GAME LOOP & KONTROL INPUT
+    // 6. GAME LOOP & KONTROL INPUT
     // ---------------------------------------------------------------
     function gameLoop() {
       updatePhysics();
@@ -1085,9 +1313,7 @@
       initAudio();
       document.getElementById('startOverlay').classList.add('hidden');
       isGameRunning = true;
-      initStars();
-      initScenery();
-      updateCargoUI();
+      resetLevel();
     }
 
     function toggleFullscreen() {
@@ -1131,9 +1357,8 @@
     btnReverse.addEventListener('touchstart', handleRevDown);
     btnReverse.addEventListener('touchend', handleRevUp);
 
-    // Mulai Inisialisasi
-    initStars();
-    initScenery();
+    // Inisialisasi Level Awal
+    selectLevel(1);
     requestAnimationFrame(gameLoop);
   </script>
 </body>
