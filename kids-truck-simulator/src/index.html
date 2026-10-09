@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Kids Truck Simulator - Truk Pasir Ceria & Klakson Telolet 🚚</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <!-- Google Font: Fredoka (Font Kartun Ramah Anak) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Fredoka', cursive, sans-serif;
+      touch-action: manipulation;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    /* Tombol 3D Kartun Empuk */
+    .btn-bouncy {
+      transition: all 0.1s ease;
+      box-shadow: 0 6px 0 rgba(0, 0, 0, 0.25);
+    }
+    .btn-bouncy:active {
+      transform: translateY(4px);
+      box-shadow: 0 2px 0 rgba(0, 0, 0, 0.25);
+    }
+    /* Efek Pulse Klakson */
+    @keyframes honk-pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.12); }
+    }
+    .honking {
+      animation: honk-pulse 0.25s infinite;
+    }
+  </style>
+</head>
+<body class="bg-sky-400 min-h-screen flex flex-col justify-between overflow-x-hidden">
+
+  <!-- TOP HEADER / STATUS BAR -->
+  <header class="w-full bg-white/90 backdrop-blur-md px-4 py-2.5 shadow-md flex items-center justify-between z-20">
+    <!-- Logo & Title -->
+    <div class="flex items-center gap-2">
+      <div class="w-10 h-10 rounded-2xl bg-amber-400 text-white flex items-center justify-center text-xl shadow-md border-2 border-amber-500">
+        <i class="fas fa-truck-pickup"></i>
+      </div>
+      <div>
+        <h1 class="text-base sm:text-lg font-bold text-slate-800 leading-tight">Truk Pasir Ceria</h1>
+        <p class="text-[11px] text-sky-600 font-semibold">Simulator Truk Anak ⭐️</p>
+      </div>
+    </div>
+
+    <!-- Stats & Quick Actions -->
+    <div class="flex items-center gap-2 sm:gap-4">
+      <!-- Bintang Skor -->
+      <div class="flex items-center gap-1.5 px-3 py-1 bg-amber-100 border-2 border-amber-300 rounded-full text-amber-700 font-bold text-sm shadow-inner">
+        <i class="fas fa-star text-amber-500 text-base"></i>
+        <span id="starScoreDisplay">0</span>
+      </div>
+
+      <!-- Pilih Warna Truk -->
+      <div class="flex items-center gap-1 bg-slate-100 p-1 rounded-full border border-slate-200">
+        <button onclick="setTruckColor('#facc15')" class="w-6 h-6 rounded-full bg-yellow-400 border-2 border-white hover:scale-110 transition shadow-sm" title="Kuning"></button>
+        <button onclick="setTruckColor('#ef4444')" class="w-6 h-6 rounded-full bg-red-500 border-2 border-white hover:scale-110 transition shadow-sm" title="Merah"></button>
+        <button onclick="setTruckColor('#3b82f6')" class="w-6 h-6 rounded-full bg-blue-500 border-2 border-white hover:scale-110 transition shadow-sm" title="Biru"></button>
+        <button onclick="setTruckColor('#22c55e')" class="w-6 h-6 rounded-full bg-emerald-500 border-2 border-white hover:scale-110 transition shadow-sm" title="Hijau"></button>
+      </div>
+
+      <!-- Tombol Fullscreen (Bagus untuk Rekam Layar YouTube) -->
+      <button onclick="toggleFullscreen()" class="w-9 h-9 rounded-xl bg-sky-500 hover:bg-sky-600 text-white flex items-center justify-center text-sm shadow btn-bouncy" title="Layar Penuh">
+        <i class="fas fa-expand"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- GAME CANVAS CONTAINER -->
+  <main class="relative flex-1 w-full max-w-5xl mx-auto flex flex-col items-center justify-center p-2 sm:p-4">
+    <div id="gameContainer" class="relative w-full aspect-[16/9] max-h-[68vh] bg-sky-300 rounded-2xl overflow-hidden shadow-2xl border-4 border-white flex items-center justify-center">
+      
+      <!-- HTML5 Canvas Game -->
+      <canvas id="gameCanvas" class="w-full h-full block"></canvas>
+
+      <!-- Overlay Tutorial / Banner Sambutan -->
+      <div id="startOverlay" class="absolute inset-0 bg-sky-900/60 backdrop-blur-sm flex flex-col items-center justify-center p-6 text-center text-white z-10">
+        <div class="w-20 h-20 rounded-3xl bg-amber-400 text-slate-900 flex items-center justify-center text-4xl shadow-xl mb-4 border-4 border-white animate-bounce">
+          <i class="fas fa-truck-monster"></i>
+        </div>
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-white drop-shadow-md mb-2">Halo Sopir Truk Cilik! 🚚</h2>
+        <p class="text-sm sm:text-base text-sky-100 max-w-md mb-6 leading-relaxed">
+          Isi pasir warna-warni, bunyikan klakson telolet, dan antar pasir melewati bukit sampai garis akhir!
+        </p>
+        <button onclick="startGame()" class="px-8 py-3.5 bg-emerald-500 hover:bg-emerald-400 text-white text-lg font-bold rounded-2xl border-b-4 border-emerald-700 btn-bouncy flex items-center gap-2 shadow-xl animate-pulse">
+          <i class="fas fa-play"></i>
+          <span>MULAI MAIN SEKARANG!</span>
+        </button>
+      </div>
+
+      <!-- Toast Perayaan Muatan Selesai -->
+      <div id="celebrationBanner" class="hidden absolute top-6 px-6 py-2.5 bg-amber-400/95 border-2 border-white rounded-2xl text-slate-900 font-extrabold text-base shadow-2xl flex items-center gap-2 animate-bounce z-10">
+        <i class="fas fa-trophy text-amber-700 text-xl"></i>
+        <span>HOREEE! PASIR BERHASIL DITUMPAHKAN! ⭐️+50</span>
+      </div>
+
+      <!-- Indikator Muatan di Layar -->
+      <div class="absolute top-3 left-3 bg-white/85 backdrop-blur px-3 py-1.5 rounded-xl border border-slate-200 shadow-sm flex items-center gap-2 text-xs font-bold text-slate-700 pointer-events-none">
+        <i class="fas fa-box text-amber-500"></i>
+        <span>Muatan Pasir:</span>
+        <div class="w-20 h-3 bg-slate-200 rounded-full overflow-hidden border border-slate-300">
+          <div id="cargoProgressBar" class="h-full bg-emerald-500 transition-all duration-150" style="width: 0%;"></div>
+        </div>
+        <span id="cargoPercentDisplay">0%</span>
+      </div>
+    </div>
+  </main>
+
+  <!-- TOUCH CONTROLS (KONTROL EMPUK UNTUK ANAK DI HP) -->
+  <section class="w-full max-w-5xl mx-auto px-4 pb-3 z-20">
+    <div class="bg-white/90 backdrop-blur-md p-3 sm:p-4 rounded-3xl shadow-xl border-2 border-white flex items-center justify-between gap-2 sm:gap-4">
+      
+      <!-- KONTROL KIRI: MUNDUR / REM -->
+      <div class="flex items-center gap-2">
+        <button id="btnReverse" class="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-rose-500 hover:bg-rose-400 text-white font-extrabold text-2xl flex items-center justify-center border-b-4 border-rose-700 btn-bouncy shadow-lg active:scale-95" title="Mundur">
+          <i class="fas fa-backward"></i>
+        </button>
+      </div>
+
+      <!-- KONTROL TENGAH: KLAKSON TELOLET BESAR & TOMBOL AKSI -->
+      <div class="flex items-center gap-2 sm:gap-3">
+        <!-- Tombol Isi Pasir (Muncul saat dekat Loader) -->
+        <button id="btnLoadCargo" onclick="triggerLoadCargo()" class="px-3.5 py-3 sm:px-5 sm:py-3.5 rounded-2xl bg-amber-500 hover:bg-amber-400 text-white font-bold text-xs sm:text-sm flex items-center gap-1.5 border-b-4 border-amber-700 btn-bouncy shadow-md">
+          <i class="fas fa-dolly"></i>
+          <span>ISI PASIR</span>
+        </button>
+
+        <!-- TOMBOL KLAKSON TELOLET UTAMA -->
+        <button id="btnHonk" onclick="playTeloletHorn()" class="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-tr from-amber-500 to-yellow-400 hover:from-amber-400 hover:to-yellow-300 text-slate-900 font-extrabold text-2xl sm:text-3xl flex flex-col items-center justify-center border-4 border-white shadow-xl btn-bouncy transform active:scale-95 ring-4 ring-amber-400/40" title="Klakson Telolet">
+          <i class="fas fa-bullhorn text-rose-600"></i>
+          <span class="text-[9px] sm:text-[10px] font-black uppercase tracking-tighter text-slate-900 mt-0.5">TELOLET!</span>
+        </button>
+
+        <!-- Tombol Jungkit Bak (Muncul saat dekat Dump Station) -->
+        <button id="btnDumpCargo" onclick="triggerDumpCargo()" class="px-3.5 py-3 sm:px-5 sm:py-3.5 rounded-2xl bg-indigo-500 hover:bg-indigo-400 text-white font-bold text-xs sm:text-sm flex items-center gap-1.5 border-b-4 border-indigo-700 btn-bouncy shadow-md">
+          <i class="fas fa-arrow-up-from-bracket"></i>
+          <span>JUNGKIT</span>
+        </button>
+      </div>
+
+      <!-- KONTROL KANAN: GAS MAJU -->
+      <div class="flex items-center gap-2">
+        <button id="btnGas" class="w-16 h-14 sm:w-20 sm:h-16 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-white font-extrabold text-2xl flex items-center justify-center border-b-4 border-emerald-700 btn-bouncy shadow-lg active:scale-95" title="Gas Maju">
+          <i class="fas fa-forward mr-1"></i>
+          <span class="text-sm font-black hidden sm:inline">GAS!</span>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- LINK PROMOSI AFFILIATE / YOUTUBE (RAMAH & MENARIK) -->
+    <div class="mt-2.5 flex items-center justify-between text-xs text-white/95 px-2">
+      <div class="flex items-center gap-1.5 font-medium">
+        <i class="fas fa-gamepad text-amber-300"></i>
+        <span>Gunakan tombol panah keyboard atau sentuh tombol di atas.</span>
+      </div>
+      <a href="https://s.shopee.co.id/8UoXyz123" target="_blank" class="bg-orange-500/90 hover:bg-orange-600 px-3 py-1 rounded-xl text-white font-bold flex items-center gap-1.5 shadow transition">
+        <i class="fas fa-bag-shopping"></i>
+        <span>Beli Mainan Truk Mini 🛒</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- ============================================================== -->
+  <!-- 🚚 JAVASCRIPT: LOGIKA GAME, FISIKA TRUK & AUDIO TELOLET -->
+  <!-- ============================================================== -->
+  <script>
+    // ---------------------------------------------------------------
+    // 1. WEB AUDIO API SYNTHESIZER (Tanpa butuh download file MP3 eksternal)
+    // ---------------------------------------------------------------
+    let audioCtx = null;
+
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+
+    // Nada Klakson Telolet / Basuri (Arpeggio Ceria)
+    function playTeloletHorn() {
+      initAudio();
+      const now = audioCtx.currentTime;
+      const notes = [261.63, 329.63, 392.00, 523.25, 440.00, 523.25]; // C, E, G, C2, A, C2
+      const step = 0.08;
+
+      notes.forEach((freq, idx) => {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(freq, now + idx * step);
+
+        gain.gain.setValueAtTime(0.18, now + idx * step);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + (idx + 1) * step + 0.04);
+
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        osc.start(now + idx * step);
+        osc.stop(now + (idx + 1) * step + 0.05);
+      });
+
+      // Animasi getar tombol klakson
+      const btn = document.getElementById('btnHonk');
+      btn.classList.add('honking');
+      setTimeout(() => btn.classList.remove('honking'), 550);
+    }
+
+    // Suara Pasir/Batu Jatuh ke Bak Truk (Plop Plop Plop)
+    function playDropSound() {
+      if (!audioCtx) return;
+      const now = audioCtx.currentTime;
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(220 + Math.random() * 200, now);
+      osc.frequency.exponentialRampToValueAtTime(60, now + 0.08);
+
+      gain.gain.setValueAtTime(0.2, now);
+      gain.gain.linearRampToValueAtTime(0.01, now + 0.08);
+
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(now);
+      osc.stop(now + 0.09);
+    }
+
+    // Suara Bintang Koin Emas (Ding Ding)
+    function playCoinSound() {
+      if (!audioCtx) return;
+      const now = audioCtx.currentTime;
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(987.77, now); // B5
+      osc.frequency.setValueAtTime(1318.51, now + 0.08); // E6
+
+      gain.gain.setValueAtTime(0.15, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(now);
+      osc.stop(now + 0.36);
+    }
+
+    // Suara Hore Kemenangan Pasir Ditumpahkan (Fanfare Ceria)
+    function playCelebrationSound() {
+      if (!audioCtx) return;
+      const now = audioCtx.currentTime;
+      const fanfare = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+      fanfare.forEach((f, i) => {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(f, now + i * 0.1);
+        gain.gain.setValueAtTime(0.2, now + i * 0.1);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.1 + 0.4);
+
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start(now + i * 0.1);
+        osc.stop(now + i * 0.1 + 0.42);
+      });
+    }
+
+    // ---------------------------------------------------------------
+    // 2. KANVAS GAME & FISIKA SIMULASI
+    // ---------------------------------------------------------------
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+
+    // Resolusi Internal Virtual Canvas
+    const V_WIDTH = 1280;
+    const V_HEIGHT = 720;
+    canvas.width = V_WIDTH;
+    canvas.height = V_HEIGHT;
+
+    // Status Game
+    let isGameRunning = false;
+    let scoreStars = 0;
+    let truckColor = '#facc15'; // Kuning default
+
+    // Fisika Truk
+    const truck = {
+      x: 150,
+      y: 450,
+      width: 170,
+      height: 90,
+      vx: 0,
+      maxSpeed: 8.5,
+      accel: 0.28,
+      friction: 0.94,
+      wheelRotation: 0,
+      bounceOffset: 0,
+      bounceSpeed: 0,
+      tiltAngle: 0,
+      bedAngle: 0,        // Sudut jungkit bak truk (0 rad -> 0.6 rad)
+      isDumping: false,
+      cargoPercent: 0,    // 0 s/d 100
+      cargoParticles: []  // Butiran pasir di bak
+    };
+
+    // Stasiun & Jalanan
+    const WORLD_LENGTH = 3600; // Panjang lintasan
+    const loadingStation = { x: 220, y: 320, width: 140 };
+    const dumpStation = { x: 3200, y: 440, width: 180 };
+
+    // Koin Bintang di Jalan
+    let stars = [];
+    function initStars() {
+      stars = [];
+      for (let x = 450; x < WORLD_LENGTH - 400; x += 180 + Math.random() * 120) {
+        stars.push({
+          x: x,
+          y: getGroundY(x) - 75 - Math.sin(x * 0.01) * 35,
+          collected: false,
+          animOffset: Math.random() * Math.PI * 2
+        });
+      }
+    }
+
+    // Partikel Asap & Konfeti
+    let smokeParticles = [];
+    let confettiParticles = [];
+
+    // Kontrol Input
+    const keys = { right: false, left: false };
+
+    // Profil Kontur Jalan Berbukit
+    function getGroundY(worldX) {
+      const baseGround = 540;
+      const hill1 = Math.sin(worldX * 0.0035) * 45;
+      const hill2 = Math.sin(worldX * 0.009) * 20;
+      return baseGround + hill1 + hill2;
+    }
+
+    function setTruckColor(color) {
+      truckColor = color;
+    }
+
+    function updateCargoUI() {
+      const pct = Math.round(truck.cargoPercent);
+      document.getElementById('cargoProgressBar').style.width = pct + '%';
+      document.getElementById('cargoPercentDisplay').innerText = pct + '%';
+    }
+
+    // Pemicu Isi Pasir
+    function triggerLoadCargo() {
+      initAudio();
+      if (Math.abs(truck.x - loadingStation.x) < 200) {
+        if (truck.cargoPercent < 100) {
+          truck.cargoPercent = Math.min(100, truck.cargoPercent + 25);
+          updateCargoUI();
+          playDropSound();
+
+          // Tambah partikel pasir di bak
+          for (let i = 0; i < 15; i++) {
+            truck.cargoParticles.push({
+              x: -30 + Math.random() * 60,
+              y: -10 - Math.random() * 25,
+              color: ['#f59e0b', '#d97706', '#fbbf24', '#f43f5e', '#38bdf8'][Math.floor(Math.random() * 5)],
+              size: 3 + Math.random() * 4
+            });
+          }
+        }
+      } else {
+        // Truk belum dekat pipa pasir
+        truck.x = loadingStation.x - 40;
+      }
+    }
+
+    // Pemicu Jungkit Bak Truk
+    function triggerDumpCargo() {
+      initAudio();
+      truck.isDumping = true;
+      let dumpTimer = setInterval(() => {
+        if (truck.bedAngle < 0.65) {
+          truck.bedAngle += 0.05;
+        } else {
+          clearInterval(dumpTimer);
+          // Tumpahkan pasir
+          if (truck.cargoPercent > 0) {
+            truck.cargoPercent = 0;
+            updateCargoUI();
+            playCelebrationSound();
+            showCelebration();
+
+            // Semburkan partikel konfeti
+            createConfetti(truck.x - 70, truck.y + 20);
+          }
+
+          // Turunkan bak kembali
+          setTimeout(() => {
+            let lowerTimer = setInterval(() => {
+              if (truck.bedAngle > 0.05) {
+                truck.bedAngle -= 0.05;
+              } else {
+                truck.bedAngle = 0;
+                truck.isDumping = false;
+                clearInterval(lowerTimer);
+              }
+            }, 30);
+          }, 1200);
+        }
+      }, 30);
+    }
+
+    function showCelebration() {
+      scoreStars += 50;
+      document.getElementById('starScoreDisplay').innerText = scoreStars;
+      const banner = document.getElementById('celebrationBanner');
+      banner.classList.remove('hidden');
+      setTimeout(() => banner.classList.add('hidden'), 3000);
+    }
+
+    function createConfetti(x, y) {
+      const colors = ['#f43f5e', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899'];
+      for (let i = 0; i < 60; i++) {
+        confettiParticles.push({
+          x: x,
+          y: y,
+          vx: (Math.random() - 0.5) * 12,
+          vy: -6 - Math.random() * 8,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          size: 6 + Math.random() * 6,
+          life: 80
+        });
+      }
+    }
+
+    // ---------------------------------------------------------------
+    // 3. LOGIKA UPDATE FISIKA & ANIMASI TRUK
+    // ---------------------------------------------------------------
+    function updatePhysics() {
+      if (!isGameRunning) return;
+
+      // Gas Maju / Mundur
+      if (keys.right && !truck.isDumping) {
+        truck.vx = Math.min(truck.maxSpeed, truck.vx + truck.accel);
+        // Buat asap knalpot
+        if (Math.random() < 0.35) {
+          smokeParticles.push({
+            x: truck.x - 75,
+            y: truck.y - 10,
+            vx: -2 - Math.random() * 2,
+            vy: -1 - Math.random() * 1.5,
+            size: 6 + Math.random() * 8,
+            alpha: 0.65
+          });
+        }
+      } else if (keys.left && !truck.isDumping) {
+        truck.vx = Math.max(-truck.maxSpeed * 0.6, truck.vx - truck.accel);
+      } else {
+        truck.vx *= truck.friction;
+      }
+
+      truck.x += truck.vx;
+      truck.wheelRotation += truck.vx * 0.05;
+
+      // Batasi Dunia
+      if (truck.x < 100) { truck.x = 100; truck.vx = 0; }
+      if (truck.x > WORLD_LENGTH - 150) { truck.x = WORLD_LENGTH - 150; truck.vx = 0; }
+
+      // Penyesuaian Ketinggian Tanah & Kemiringan Truk
+      const curGround = getGroundY(truck.x);
+      const nextGround = getGroundY(truck.x + 35);
+      truck.tiltAngle = Math.atan2(nextGround - curGround, 35) * 0.7;
+
+      // Guncangan Suspensi Truk saat Bergerak
+      truck.bounceSpeed += (Math.random() - 0.5) * Math.abs(truck.vx) * 0.8;
+      truck.bounceOffset += truck.bounceSpeed;
+      truck.bounceOffset *= 0.82;
+      truck.bounceSpeed *= 0.8;
+
+      truck.y = curGround - 48 + truck.bounceOffset;
+
+      // Tabrakan Koin Bintang
+      stars.forEach(star => {
+        if (!star.collected) {
+          const dx = truck.x - star.x;
+          const dy = (truck.y - 30) - star.y;
+          if (Math.hypot(dx, dy) < 70) {
+            star.collected = true;
+            scoreStars += 5;
+            document.getElementById('starScoreDisplay').innerText = scoreStars;
+            playCoinSound();
+          }
+        }
+      });
+
+      // Update Asap Knalpot
+      smokeParticles.forEach((p, idx) => {
+        p.x += p.vx;
+        p.y += p.vy;
+        p.size += 0.4;
+        p.alpha -= 0.02;
+        if (p.alpha <= 0) smokeParticles.splice(idx, 1);
+      });
+
+      // Update Partikel Konfeti
+      confettiParticles.forEach((p, idx) => {
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += 0.3; // gravitasi
+        p.life--;
+        if (p.life <= 0) confettiParticles.splice(idx, 1);
+      });
+    }
+
+    // ---------------------------------------------------------------
+    // 4. RENDERING GRAFIS CANVAS 2D KARTUN
+    // ---------------------------------------------------------------
+    function draw() {
+      ctx.clearRect(0, 0, V_WIDTH, V_HEIGHT);
+
+      // Kamera Bergerak Mengikuti Truk
+      const cameraX = Math.max(0, Math.min(WORLD_LENGTH - V_WIDTH, truck.x - V_WIDTH * 0.35));
+
+      ctx.save();
+      ctx.translate(-cameraX, 0);
+
+      // 1. Langit & Awan Parallax
+      drawSkyAndHills(cameraX);
+
+      // 2. Garis Lintasan & Tanah Hijau
+      drawGround();
+
+      // 3. Stasiun Muat & Stasiun Tumpah
+      drawStations();
+
+      // 4. Koin Bintang Emas
+      drawStars();
+
+      // 5. Truk Pasir Kartun Lucu
+      drawTruck();
+
+      // 6. Asap & Konfeti
+      drawParticles();
+
+      ctx.restore();
+    }
+
+    function drawSkyAndHills(camX) {
+      // Gradasi Langit
+      const skyGrad = ctx.createLinearGradient(0, 0, 0, 500);
+      skyGrad.addColorStop(0, '#38bdf8');
+      skyGrad.addColorStop(1, '#bae6fd');
+      ctx.fillStyle = skyGrad;
+      ctx.fillRect(camX, 0, V_WIDTH, V_HEIGHT);
+
+      // Matahari Ceria Tersenyum
+      const sunX = camX + V_WIDTH - 160;
+      const sunY = 120;
+      ctx.fillStyle = '#fde047';
+      ctx.beginPath();
+      ctx.arc(sunX, sunY, 50, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Sinar Matahari
+      ctx.strokeStyle = '#fef08a';
+      ctx.lineWidth = 4;
+      for (let i = 0; i < 8; i++) {
+        const rad = (i * Math.PI) / 4;
+        ctx.beginPath();
+        ctx.moveTo(sunX + Math.cos(rad) * 60, sunY + Math.sin(rad) * 60);
+        ctx.lineTo(sunX + Math.cos(rad) * 75, sunY + Math.sin(rad) * 75);
+        ctx.stroke();
+      }
+
+      // Bukit Belakang (Parallax lambat)
+      ctx.fillStyle = '#86efac';
+      ctx.beginPath();
+      ctx.moveTo(camX, V_HEIGHT);
+      for (let x = camX; x <= camX + V_WIDTH + 50; x += 50) {
+        const y = 430 + Math.sin(x * 0.002) * 50;
+        ctx.lineTo(x, y);
+      }
+      ctx.lineTo(camX + V_WIDTH + 50, V_HEIGHT);
+      ctx.fill();
+    }
+
+    function drawGround() {
+      // Bukit Depan Hijau Cerah
+      ctx.fillStyle = '#4ade80';
+      ctx.beginPath();
+      ctx.moveTo(0, V_HEIGHT);
+      for (let x = 0; x <= WORLD_LENGTH; x += 30) {
+        ctx.lineTo(x, getGroundY(x));
+      }
+      ctx.lineTo(WORLD_LENGTH, V_HEIGHT);
+      ctx.fill();
+
+      // Jalanan Aspal / Tanah Coklat Ramah
+      ctx.fillStyle = '#78350f';
+      ctx.beginPath();
+      ctx.moveTo(0, V_HEIGHT);
+      for (let x = 0; x <= WORLD_LENGTH; x += 30) {
+        ctx.lineTo(x, getGroundY(x) + 12);
+      }
+      ctx.lineTo(WORLD_LENGTH, V_HEIGHT);
+      ctx.fill();
+
+      // Garis Rumput Hijau Tua
+      ctx.strokeStyle = '#22c55e';
+      ctx.lineWidth = 14;
+      ctx.beginPath();
+      for (let x = 0; x <= WORLD_LENGTH; x += 30) {
+        if (x === 0) ctx.moveTo(x, getGroundY(x));
+        else ctx.lineTo(x, getGroundY(x));
+      }
+      ctx.stroke();
+    }
+
+    function drawStations() {
+      // 1. Stasiun Pengisian Pasir (Loading Crane / Pipe)
+      const lx = loadingStation.x;
+      const ly = getGroundY(lx);
+
+      // Tiang Penyangga
+      ctx.fillStyle = '#64748b';
+      ctx.fillRect(lx - 12, ly - 230, 24, 230);
+      ctx.fillRect(lx - 80, ly - 230, 150, 24);
+
+      // Corong Pipa Pasir Kuning
+      ctx.fillStyle = '#f59e0b';
+      ctx.beginPath();
+      ctx.moveTo(lx - 45, ly - 200);
+      ctx.lineTo(lx + 45, ly - 200);
+      ctx.lineTo(lx + 20, ly - 130);
+      ctx.lineTo(lx - 20, ly - 130);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+
+      // Papan Teks "STASIUN PASIR"
+      ctx.fillStyle = '#ef4444';
+      ctx.fillRect(lx - 65, ly - 265, 130, 32);
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 15px Fredoka';
+      ctx.textAlign = 'center';
+      ctx.fillText('STASIUN PASIR', lx, ly - 244);
+
+      // 2. Stasiun Tumpah Pasir (Finish Line)
+      const dx = dumpStation.x;
+      const dy = getGroundY(dx);
+
+      // Penampungan Pasir
+      ctx.fillStyle = '#334155';
+      ctx.fillRect(dx - 60, dy - 60, 120, 65);
+      ctx.fillStyle = '#f59e0b';
+      ctx.fillRect(dx - 50, dy - 50, 100, 55);
+
+      // Bendera Finish Kotak-Kotak Ceria
+      ctx.fillStyle = '#ef4444';
+      ctx.fillRect(dx + 70, dy - 180, 10, 180);
+      ctx.fillStyle = '#10b981';
+      ctx.fillRect(dx + 80, dy - 180, 75, 45);
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 14px Fredoka';
+      ctx.fillText('FINISH', dx + 118, dy - 152);
+    }
+
+    function drawStars() {
+      stars.forEach(s => {
+        if (!s.collected) {
+          const hoverY = s.y + Math.sin(Date.now() * 0.005 + s.animOffset) * 6;
+          ctx.save();
+          ctx.translate(s.x, hoverY);
+          ctx.fillStyle = '#facc15';
+          ctx.strokeStyle = '#ca8a04';
+          ctx.lineWidth = 2.5;
+
+          // Gambar Bintang 5 Sudut
+          ctx.beginPath();
+          for (let i = 0; i < 5; i++) {
+            ctx.lineTo(Math.cos((18 + i * 72) * 0.01745) * 18, -Math.sin((18 + i * 72) * 0.01745) * 18);
+            ctx.lineTo(Math.cos((54 + i * 72) * 0.01745) * 8, -Math.sin((54 + i * 72) * 0.01745) * 8);
+          }
+          ctx.closePath();
+          ctx.fill();
+          ctx.stroke();
+          ctx.restore();
+        }
+      });
+    }
+
+    function drawTruck() {
+      ctx.save();
+      ctx.translate(truck.x, truck.y);
+      ctx.rotate(truck.tiltAngle);
+
+      // Sasis Truk Hitam
+      ctx.fillStyle = '#1e293b';
+      ctx.fillRect(-75, -20, 150, 14);
+
+      // Knalpot Truk
+      ctx.fillStyle = '#94a3b8';
+      ctx.fillRect(-70, -45, 10, 25);
+      ctx.beginPath();
+      ctx.arc(-65, -45, 7, 0, Math.PI, true);
+      ctx.fill();
+
+      // --- 1. BAK TRUK (DUMP BED) YANG BISA MENJUNGKIT ---
+      ctx.save();
+      ctx.translate(-15, -20); // Titik engsel jungkit
+      ctx.rotate(-truck.bedAngle);
+
+      // Bodi Bak Truk
+      ctx.fillStyle = truckColor;
+      ctx.strokeStyle = '#0f172a';
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.moveTo(-60, 0);
+      ctx.lineTo(35, 0);
+      ctx.lineTo(40, -45);
+      ctx.lineTo(-65, -45);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+
+      // Muatan Pasir di dalam Bak Truk
+      if (truck.cargoPercent > 0) {
+        const fillHeight = (truck.cargoPercent / 100) * 38;
+        ctx.fillStyle = '#f59e0b';
+        ctx.beginPath();
+        ctx.moveTo(-58, -2);
+        ctx.lineTo(33, -2);
+        ctx.lineTo(35, -fillHeight);
+        ctx.lineTo(-60, -fillHeight);
+        ctx.closePath();
+        ctx.fill();
+
+        // Butiran Pasir Berwarna
+        truck.cargoParticles.forEach(p => {
+          ctx.fillStyle = p.color;
+          ctx.beginPath();
+          ctx.arc(p.x, -p.size - fillHeight * 0.4, p.size, 0, Math.PI * 2);
+          ctx.fill();
+        });
+      }
+      ctx.restore();
+
+      // --- 2. KABIN KEPALA TRUK DEPAN ---
+      ctx.fillStyle = truckColor;
+      ctx.strokeStyle = '#0f172a';
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.roundRect(15, -60, 60, 48, [12, 16, 4, 4]);
+      ctx.fill();
+      ctx.stroke();
+
+      // Kaca Depan Kabin
+      ctx.fillStyle = '#e0f2fe';
+      ctx.fillRect(42, -54, 28, 22);
+
+      // Mata Kartun Ramah Anak di Kaca Truk
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath();
+      ctx.arc(52, -44, 7, 0, Math.PI * 2);
+      ctx.arc(63, -44, 7, 0, Math.PI * 2);
+      ctx.fill();
+      // Pupil Mata Hitam Berbinar
+      ctx.fillStyle = '#0f172a';
+      ctx.beginPath();
+      ctx.arc(54, -44, 3.5, 0, Math.PI * 2);
+      ctx.arc(65, -44, 3.5, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Lampu Depan Kuning Berpijar
+      ctx.fillStyle = '#fef08a';
+      ctx.beginPath();
+      ctx.arc(73, -25, 7, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+
+      // Bemper Truk
+      ctx.fillStyle = '#64748b';
+      ctx.fillRect(68, -16, 12, 10);
+
+      // --- 3. DUA RODA BESAR DENGAN ANIMASI PUTARAN ---
+      drawWheel(-45, 0, truck.wheelRotation);
+      drawWheel(45, 0, truck.wheelRotation);
+
+      ctx.restore();
+    }
+
+    function drawWheel(wx, wy, rot) {
+      ctx.save();
+      ctx.translate(wx, wy);
+      ctx.rotate(rot);
+
+      // Ban Hitam
+      ctx.fillStyle = '#0f172a';
+      ctx.beginPath();
+      ctx.arc(0, 0, 20, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Velg Putih
+      ctx.fillStyle = '#f8fafc';
+      ctx.beginPath();
+      ctx.arc(0, 0, 11, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Gerigi Velg Kartun
+      ctx.strokeStyle = '#64748b';
+      ctx.lineWidth = 3;
+      for (let i = 0; i < 4; i++) {
+        const rad = (i * Math.PI) / 2;
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.lineTo(Math.cos(rad) * 10, Math.sin(rad) * 10);
+        ctx.stroke();
+      }
+
+      ctx.restore();
+    }
+
+    function drawParticles() {
+      // Asap Knalpot
+      smokeParticles.forEach(p => {
+        ctx.fillStyle = `rgba(241, 245, 249, ${p.alpha})`;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      // Konfeti Kemenangan
+      confettiParticles.forEach(p => {
+        ctx.fillStyle = p.color;
+        ctx.fillRect(p.x, p.y, p.size, p.size);
+      });
+    }
+
+    // ---------------------------------------------------------------
+    // 5. GAME LOOP & EVENT LISTENERS
+    // ---------------------------------------------------------------
+    function gameLoop() {
+      updatePhysics();
+      draw();
+      requestAnimationFrame(gameLoop);
+    }
+
+    function startGame() {
+      initAudio();
+      document.getElementById('startOverlay').classList.add('hidden');
+      isGameRunning = true;
+      initStars();
+      updateCargoUI();
+    }
+
+    // Layar Penuh untuk Rekam Layar YouTube
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        document.exitFullscreen().catch(() => {});
+      }
+    }
+
+    // Kontrol Keyboard (PC / Laptop)
+    window.addEventListener('keydown', (e) => {
+      initAudio();
+      if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') keys.right = true;
+      if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') keys.left = true;
+      if (e.key === ' ') { e.preventDefault(); playTeloletHorn(); }
+      if (e.key === 'ArrowUp' || e.key === 'w') triggerDumpCargo();
+      if (e.key === 'ArrowDown' || e.key === 's') triggerLoadCargo();
+    });
+
+    window.addEventListener('keyup', (e) => {
+      if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') keys.right = false;
+      if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') keys.left = false;
+    });
+
+    // Kontrol Sentuh Layar (HP Android / iPhone / Tablet)
+    const btnGas = document.getElementById('btnGas');
+    const btnReverse = document.getElementById('btnReverse');
+
+    const handleGasDown = (e) => { e.preventDefault(); initAudio(); keys.right = true; };
+    const handleGasUp = (e) => { e.preventDefault(); keys.right = false; };
+    btnGas.addEventListener('mousedown', handleGasDown);
+    btnGas.addEventListener('mouseup', handleGasUp);
+    btnGas.addEventListener('touchstart', handleGasDown);
+    btnGas.addEventListener('touchend', handleGasUp);
+
+    const handleRevDown = (e) => { e.preventDefault(); initAudio(); keys.left = true; };
+    const handleRevUp = (e) => { e.preventDefault(); keys.left = false; };
+    btnReverse.addEventListener('mousedown', handleRevDown);
+    btnReverse.addEventListener('mouseup', handleRevUp);
+    btnReverse.addEventListener('touchstart', handleRevDown);
+    btnReverse.addEventListener('touchend', handleRevUp);
+
+    // Mulai Loop Animasi
+    initStars();
+    requestAnimationFrame(gameLoop);
+  </script>
+</body>
+</html>
